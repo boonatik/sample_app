@@ -19,9 +19,11 @@ describe "StaticPages" do
 
     describe "for signed-in users" do
       let(:user) { FactoryGirl.create(:user) }
+      let(:another_user) { FactoryGirl.create(:user) }
       before do
         FactoryGirl.create(:micropost, user: user, content: "Lorem ipsum")
         FactoryGirl.create(:micropost, user: user, content: "Dolor sit amet")
+        FactoryGirl.create(:micropost, user: another_user, content: "qwe")
         sign_in user
         visit root_path
       end
@@ -31,6 +33,19 @@ describe "StaticPages" do
           expect(page).to have_selector("li##{item.id}", text: item.content)
         end
       end
+
+      it { should have_selector("span", text: "2 microposts") }
+    end
+
+    describe "feed pluralize" do
+      let(:user) { FactoryGirl.create(:user) }
+      before do
+        FactoryGirl.create(:micropost, user: user, content: "Lorem ipsum")
+        sign_in user
+        visit root_path
+      end
+
+      it { should have_selector("span", text: "1 micropost") }
     end
   end
 
