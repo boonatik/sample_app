@@ -35,6 +35,16 @@ describe "StaticPages" do
       end
 
       it { should have_selector("span", text: "2 microposts") }
+
+      describe "follower/following count" do
+        before do
+          another_user.follow!(user)
+          visit root_path
+        end
+
+        it { should have_link("0 following", href: following_user_path(user)) }
+        it { should have_link("1 followers", href: followers_user_path(user)) }
+      end
     end
 
     describe "feed pluralize" do
